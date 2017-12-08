@@ -95,19 +95,20 @@ public abstract class MapboxService<T> {
    * @return OkHttpClient
    * @since 1.0.0
    */
-  public OkHttpClient getOkHttpClient() {
-    if (okHttpClient == null) {
-      if (isEnableDebug()) {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
-        okHttpClient = httpClient.build();
-      } else {
-        okHttpClient = new OkHttpClient();
+  protected OkHttpClient getOkHttpClient() {
+    synchronized (this) {
+      if (okHttpClient == null) {
+        if (isEnableDebug()) {
+          HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+          logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+          OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+          httpClient.addInterceptor(logging);
+          okHttpClient = httpClient.build();
+        } else {
+          okHttpClient = new OkHttpClient();
+        }
       }
+      return okHttpClient;
     }
-
-    return okHttpClient;
   }
 }
